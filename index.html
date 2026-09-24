@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Particle Lab - Advanced Animated Background Generator</title>
+    <meta name="description"
+        content="Create stunning, interactive animated backgrounds for your website with Particle Lab. Customize networks, floating polygons, ambient dust, Matrix rain, 3D globes, and more. Export ready-to-use code instantly.">
+    <meta name="keywords"
+        content="particle.js generator, website background generator, animated background, web design tools, matrix rain effect, interactive backgrounds, html5 canvas effects, dark theme, semplicemente.io">
+    <meta name="author" content="Semplicemente.io">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://particlelab.semplicemente.io/">
+    <meta property="og:title" content="Particle Lab - Advanced Animated Background Generator">
+    <meta property="og:description"
+        content="Create stunning, interactive animated backgrounds for your website with Particle Lab. Customize networks, floating polygons, ambient dust, Matrix rain, 3D globes, and more. Export ready-to-use code instantly.">
+    <meta property="og:image" content="https://particlelab.semplicemente.io/images/particle-lab-preview.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://particlelab.semplicemente.io/">
+    <meta property="twitter:title" content="Particle Lab - Advanced Animated Background Generator">
+    <meta property="twitter:description"
+        content="Create stunning, interactive animated backgrounds for your website with Particle Lab. Customize networks, floating polygons, ambient dust, Matrix rain, 3D globes, and more. Export ready-to-use code instantly.">
+    <meta property="twitter:image" content="https://particlelab.semplicemente.io/images/particle-lab-preview.jpg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- tsParticles -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+</head>
+
+<body>
+    <!-- Background Canvas Layer -->
+    <div id="tsparticles"></div>
+    <canvas id="custom-canvas"></canvas>
+
+    <!-- Overlay Backdrop for Mobile -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+    <!-- Floating Trigger when Sidebar is closed -->
+    <button id="sidebar-toggle" class="floating-dock-btn" aria-label="Open Controls Menu" title="Controls (H)">
+        <div class="dock-icon-wrapper">
+            <i class="fas fa-sliders"></i>
+        </div>
+        <span class="dock-label">Semplicemente.io</span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="glass-sidebar" role="region" aria-label="Particle Control Panel">
+        
+        <!-- Header: Brand + Quick Actions -->
+        <div class="panel-header">
+            <div class="brand-group">
+                <div class="brand-text">
+                    <span class="brand-title">Particle Lab</span>
+                    <span class="brand-subtitle">Studio v2.0</span>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button id="btn-randomize" class="icon-action-btn" title="Randomize Preset" aria-label="Randomize Preset">
+                    <i class="fas fa-dice"></i>
+                </button>
+                <button id="btn-close-sidebar" class="icon-action-btn close-btn" title="Close Menu (H)" aria-label="Close Menu">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Master Preset Selector -->
+        <div class="preset-section">
+            <label for="preset-select" class="section-label">
+                <i class="fas fa-wand-magic-sparkles"></i> Preset Template
+            </label>
+            <div class="custom-select-wrapper">
+                <select id="preset-select">
+                    <option value="network">🌐 Digital Network (Plexus)</option>
+                    <option value="stardust">🌌 Ambient Stardust (SaaS)</option>
+                    <option value="geometric">💎 Floating Polygons (Modern UI)</option>
+                    <option value="bokeh">🫧 Glowing Bokeh Orbs</option>
+                    <option value="stars">✨ Starfield Deep Space</option>
+                    <option value="snow">❄️ Snowfall Winter</option>
+                    <option value="fire">🔥 Plasma Flame</option>
+                    <option value="matrix">⚡ Matrix Digital Rain</option>
+                    <option value="matrixReal">💻 Matrix Classic CRT</option>
+                    <option value="confetti">🎉 Party Confetti</option>
+                    <option value="fireflies">💡 Magic Fireflies</option>
+                    <option value="warp">🚀 Hyperspace Warp</option>
+                    <option value="planet3d">🪐 Cyber Globe 3D</option>
+                    <option value="vortex">🌀 Cosmic Vortex</option>
+                    <option value="wave3d">🌊 Quantum Wave 3D</option>
+                </select>
+                <div class="select-chevron"><i class="fas fa-chevron-down"></i></div>
+            </div>
+        </div>
+
+        <!-- Controls Container -->
+        <div class="controls-container">
+            
+            <!-- Core Parameters (Speed, Count, Size) -->
+            <div class="params-stack">
+                <!-- Speed -->
+                <div class="param-card">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-gauge-high"></i> Speed</span>
+                        <span id="particle-speed-val" class="param-value-badge">2</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="particle-speed" min="0.1" max="20" step="0.1" value="2">
+                    </div>
+                </div>
+
+                <!-- Count -->
+                <div class="param-card">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-cubes"></i> Count / Density</span>
+                        <span id="particle-count-val" class="param-value-badge">90</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="particle-count" min="10" max="500" step="5" value="90">
+                    </div>
+                </div>
+
+                <!-- Size -->
+                <div class="param-card">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-circle-dot"></i> Size</span>
+                        <span id="particle-size-val" class="param-value-badge">3</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="particle-size" min="1" max="50" step="1" value="3">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Specific Preset Controls -->
+            <div id="specific-controls" class="specific-grid">
+                <!-- Network: Link Distance -->
+                <div class="param-card specific-card hidden" data-specific="network">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-bezier-curve"></i> Link Distance</span>
+                        <span id="link-distance-val" class="param-value-badge">140</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="link-distance" min="30" max="300" step="5" value="140">
+                    </div>
+                </div>
+
+                <!-- Planet 3D: Globe Radius -->
+                <div class="param-card specific-card hidden" data-specific="planet3d">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-globe"></i> 3D Globe Radius</span>
+                        <span id="planet-ring-val" class="param-value-badge">350</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="planet-ring" min="100" max="600" step="5" value="350">
+                    </div>
+                </div>
+
+                <!-- Matrix: Charset -->
+                <div class="param-card specific-card hidden" data-specific="matrix">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-font"></i> Character Set</span>
+                    </div>
+                    <div class="custom-select-wrapper mini-select">
+                        <select id="matrix-charset">
+                            <option value="binary">Binary (0, 1)</option>
+                            <option value="alphanumeric">Alphanumeric (A-Z, 0-9)</option>
+                            <option value="katakana">Katakana (Matrix)</option>
+                            <option value="custom">Custom Set...</option>
+                        </select>
+                        <div class="select-chevron"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                    <input type="text" id="matrix-chars" class="custom-input-text hidden" placeholder="e.g. 0123456789ABCDEF" value="">
+                </div>
+
+                <!-- Snow: Gravity -->
+                <div class="param-card specific-card hidden" data-specific="snow">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-cloud-rain"></i> Gravity / Fall</span>
+                        <span id="snow-gravity-val" class="param-value-badge">3</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="snow-gravity" min="1" max="10" step="0.5" value="3">
+                    </div>
+                </div>
+
+                <!-- Matrix Real: Trail Opacity -->
+                <div class="param-card specific-card hidden" data-specific="matrixReal">
+                    <div class="param-header">
+                        <span class="param-label"><i class="fas fa-water"></i> Trail Fade</span>
+                        <span id="matrix-opacity-val" class="param-value-badge">1</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="matrix-opacity" min="0.2" max="5" step="0.1" value="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Picker -->
+            <div class="param-card color-card">
+                <div class="param-header">
+                    <span class="param-label"><i class="fas fa-palette"></i> Color & Hue</span>
+                    <span id="color-hex-badge" class="param-value-badge font-mono">#8b5cf6</span>
+                </div>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview-pill" id="color-preview-pill" style="background-color: #8b5cf6;">
+                        <input type="color" id="particle-color" value="#8b5cf6" title="Choose Color">
+                        <span class="color-pick-text">Click to choose color</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mouse Interaction -->
+            <div class="param-card interaction-card">
+                <div class="param-header">
+                    <span class="param-label"><i class="fas fa-hand-pointer"></i> Mouse Interaction</span>
+                </div>
+                <div class="custom-select-wrapper">
+                    <select id="interaction-mode">
+                        <option value="grab">Grab (Connect)</option>
+                        <option value="repulse">Repulse (Push Away)</option>
+                        <option value="attract">Attract (Pull In)</option>
+                        <option value="bubble">Bubble (Enlarge)</option>
+                        <option value="none">None</option>
+                    </select>
+                    <div class="select-chevron"><i class="fas fa-chevron-down"></i></div>
+                </div>
+            </div>
+
+            <!-- Pro Effects Card -->
+            <div class="effects-card">
+                <div class="effects-toggles-list">
+                    <!-- Glow Toggle -->
+                    <label class="toggle-row" for="toggle-glow">
+                        <span class="toggle-label"><i class="fas fa-sun"></i> Neon Glow</span>
+                        <div class="switch">
+                            <input type="checkbox" id="toggle-glow">
+                            <span class="slider round"></span>
+                        </div>
+                    </label>
+
+                    <!-- Trails Toggle -->
+                    <label class="toggle-row" for="toggle-trails">
+                        <span class="toggle-label"><i class="fas fa-meteor"></i> Motion Trails</span>
+                        <div class="switch">
+                            <input type="checkbox" id="toggle-trails">
+                            <span class="slider round"></span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer: Export Code + Links -->
+        <div class="panel-footer">
+            <a id="btn-kofi" href="https://ko-fi.com/semplicemente" target="_blank" rel="noopener" class="btn-kofi-glass full-width">
+                <i class="fas fa-mug-hot" style="color: #ff5e5b;"></i> Support the Project
+            </a>
+            <button id="btn-generate" class="btn-primary-glow full-width">
+                <i class="fas fa-code"></i> Export Code
+            </button>
+            <div class="footer-links">
+                <a href="https://semplicemente.io/" target="_blank" rel="noopener">Semplicemente.io</a>
+                <span class="dot-separator">•</span>
+                <a href="https://semplicemente.io/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- Export Code Modal -->
+    <div id="export-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <div class="modal-icon-badge">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div>
+                        <h3>Export Animated Background</h3>
+                        <p class="modal-sub">Copy and paste directly into your website</p>
+                    </div>
+                </div>
+                <button id="btn-close-modal" class="icon-action-btn close-modal-btn" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Export Format Tabs -->
+            <div class="export-tabs-nav">
+                <button class="export-tab active" data-format="html">
+                    <i class="fab fa-html5"></i> Complete HTML
+                </button>
+                <button class="export-tab" data-format="js">
+                    <i class="fab fa-js"></i> JavaScript Snippet
+                </button>
+                <button class="export-tab" data-format="json">
+                    <i class="fas fa-brackets-curly"></i> JSON Config
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="code-container">
+                    <textarea id="export-code" readonly spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="modal-footer-info">
+                    <i class="fas fa-circle-check"></i> Production Ready
+                </div>
+                <div class="modal-footer-btns">
+                    <button id="btn-download" class="btn-secondary-glass">
+                        <i class="fas fa-download"></i> Download File
+                    </button>
+                    <button id="btn-copy" class="btn-primary-glow">
+                        <i class="far fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
